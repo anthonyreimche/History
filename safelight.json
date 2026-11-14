@@ -1,0 +1,24 @@
+{
+  "id": "history",
+  "name": "History",
+  "version": "1.0.0",
+  "description": "Every step of the photo you are editing, to go back or forward to, and what each one changed.",
+  "author": "Anthony Reimche",
+  "main": "dist/index.js",
+  "license": "GPL-3.0-only",
+  "categories": [
+    "workflow"
+  ],
+  "keywords": [
+    "history",
+    "undo",
+    "redo",
+    "steps",
+    "edit"
+  ],
+  "repository": "anthonyreimche/History",
+  "worksWith": [
+    "anthonyreimche/Develop"
+  ],
+  "minAppVersion": "3.2.5"
+}
