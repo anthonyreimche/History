@@ -23,7 +23,7 @@ export const EMPTY_CLASS = "history-panel-empty";
  *  Accessibility ▸ Larger text rule for 11 px text. */
 export function historyCss(t: UiTokens): string {
   return `
-:where(.${LIST_CLASS}) { list-style: none; margin: 0; padding: 0.25rem; display: flex; flex-direction: column; gap: 1px; }
+:where(.${LIST_CLASS}) { list-style: none; margin: 0; padding: 0.25rem; display: flex; flex-direction: column; gap: 1px; max-height: 20rem; overflow-y: auto; }
 :where(.${ROW_CLASS}) { display: flex; width: 100%; align-items: baseline; gap: 0.5rem; border-radius: 0.25rem; padding: 0.25rem 0.5rem; background-color: transparent; font-size: 11px; text-align: left; color: ${t.textSecondary}; cursor: pointer; }
 @media (hover: hover) { :where(.${ROW_CLASS}:hover) { background-color: ${t.surface3}; color: ${t.textPrimary}; } }
 :where(.${ROW_CLASS}[aria-current="step"]) { background-color: ${t.surface3}; color: ${t.textPrimary}; box-shadow: inset 2px 0 0 ${t.accent}; }

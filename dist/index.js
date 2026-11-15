@@ -118,7 +118,7 @@ function _(e) {
 var v = "history-panel-list", y = "history-panel-step", b = "history-panel-label", x = "history-panel-detail", S = "history-panel-empty";
 function C(e) {
 	return `
-:where(.${v}) { list-style: none; margin: 0; padding: 0.25rem; display: flex; flex-direction: column; gap: 1px; }
+:where(.${v}) { list-style: none; margin: 0; padding: 0.25rem; display: flex; flex-direction: column; gap: 1px; max-height: 20rem; overflow-y: auto; }
 :where(.${y}) { display: flex; width: 100%; align-items: baseline; gap: 0.5rem; border-radius: 0.25rem; padding: 0.25rem 0.5rem; background-color: transparent; font-size: 11px; text-align: left; color: ${e.textSecondary}; cursor: pointer; }
 @media (hover: hover) { :where(.${y}:hover) { background-color: ${e.surface3}; color: ${e.textPrimary}; } }
 :where(.${y}[aria-current="step"]) { background-color: ${e.surface3}; color: ${e.textPrimary}; box-shadow: inset 2px 0 0 ${e.accent}; }

@@ -5,10 +5,10 @@
 
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { DETAIL_CLASS, EMPTY_CLASS, HistoryPanel, ROW_CLASS } from "../src/HistoryPanel";
+import { DETAIL_CLASS, EMPTY_CLASS, HistoryPanel, LIST_CLASS, ROW_CLASS, historyCss } from "../src/HistoryPanel";
 import { React, initRuntime } from "../src/rt";
 import type { EditSnapshot } from "../src/safelight";
-import { fakeApi, snapshot, type Rig } from "./support/fake-api";
+import { TOKENS, fakeApi, snapshot, type Rig } from "./support/fake-api";
 
 const HISTORY: EditSnapshot[] = [
   snapshot("Original", { exposure: 0, contrast: 0 }),
@@ -120,5 +120,13 @@ describe("HistoryPanel", () => {
     const rig = mount();
     act(() => rig.develop.setState({ editError: "Couldn't read the file." }));
     expect(document.querySelector(`.${EMPTY_CLASS}`)?.textContent).toBe("This photo's history couldn't be read.");
+  });
+});
+
+describe("historyCss", () => {
+  it("caps the list's height and scrolls inside it, however long the history", () => {
+    const listRule = historyCss(TOKENS).split("\n").find((line) => line.includes(`.${LIST_CLASS})`));
+    expect(listRule).toMatch(/max-height: \d/);
+    expect(listRule).toContain("overflow-y: auto");
   });
 });
