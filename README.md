@@ -10,7 +10,9 @@ first, from the photo as opened to your latest change.
   as Undo and Redo always do.
 - **What each step changed** shows beside it: how far a single slider moved,
   or how many settings changed. Hover a step for the full list, such as
-  "Exposure: 0 → 0.5" or "Mask “Sky” edited".
+  "Exposure: 0 → 0.5" or "Mask “Sky” edited". To keep the list to labels
+  alone, turn off **Show what each step changed** in Preferences ▸
+  Extensions ▸ History; hovering a step still lists its changes.
 
 The list is the photo's own undo history, so it agrees with Undo and Redo, the
 keyboard shortcuts and other windows, and keeps as many steps as Safelight

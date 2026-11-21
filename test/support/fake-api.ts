@@ -1,6 +1,7 @@
 // A stand-in Safelight API over real React and zustand. The develop store holds
 // an edit history the way core's does, goToHistory moves through it as core's
-// does (and is recorded), and so is every registration.
+// does (and is recorded), and so is every registration. Settings persist in a
+// map and tell onChange listeners, as core's do.
 
 import * as React from "react";
 import { create } from "zustand";
@@ -10,6 +11,7 @@ import type {
   PanelContribution,
   ParamDescriptor,
   SafelightAPI,
+  SettingsContribution,
   StoreApi,
   StylesheetContribution,
   UiTokens,
@@ -30,6 +32,7 @@ export interface Rig {
   moves: number[];
   panels: PanelContribution[];
   stylesheets: StylesheetContribution[];
+  settingsSections: SettingsContribution[];
 }
 
 export const snapshot = (
@@ -44,10 +47,19 @@ export function fakeApi({
   history = [],
   at = history.length - 1,
   descriptors = {},
-}: { history?: EditSnapshot[]; at?: number; descriptors?: Record<string, ParamDescriptor> } = {}): Rig {
+  settings = {},
+}: {
+  history?: EditSnapshot[];
+  at?: number;
+  descriptors?: Record<string, ParamDescriptor>;
+  settings?: Record<string, unknown>;
+} = {}): Rig {
   const moves: number[] = [];
   const panels: PanelContribution[] = [];
   const stylesheets: StylesheetContribution[] = [];
+  const settingsSections: SettingsContribution[] = [];
+  const stored = new Map(Object.entries(settings));
+  const listeners = new Set<(key: string, value: unknown) => void>();
   const develop: StoreApi<DevelopStoreState> = create<DevelopStoreState>()((set) => ({
     history,
     historyIndex: at,
@@ -63,9 +75,21 @@ export function fakeApi({
     react: React,
     registerPanel: (c) => void panels.push(c),
     registerStylesheet: (c) => void stylesheets.push(c),
+    registerSettings: (c) => void settingsSections.push(c),
+    settings: {
+      get: <T>(key: string, fallback: T) => (stored.has(key) ? (stored.get(key) as T) : fallback),
+      set: (key, value) => {
+        stored.set(key, value);
+        listeners.forEach((listener) => listener(key, value));
+      },
+      onChange: (listener) => {
+        listeners.add(listener);
+        return () => void listeners.delete(listener);
+      },
+    },
     ui: { tokens: TOKENS },
     params: { get: (key) => descriptors[key] },
     stores: { useDevelopStore: develop },
   };
-  return { api, develop, moves, panels, stylesheets };
+  return { api, develop, moves, panels, stylesheets, settingsSections };
 }

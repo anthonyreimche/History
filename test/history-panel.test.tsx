@@ -8,6 +8,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { DETAIL_CLASS, EMPTY_CLASS, HistoryPanel, LIST_CLASS, ROW_CLASS, historyCss } from "../src/HistoryPanel";
 import { React, initRuntime } from "../src/rt";
 import type { EditSnapshot } from "../src/safelight";
+import { SHOW_CHANGES_KEY } from "../src/settings";
 import { TOKENS, fakeApi, snapshot, type Rig } from "./support/fake-api";
 
 const HISTORY: EditSnapshot[] = [
@@ -90,6 +91,20 @@ describe("HistoryPanel", () => {
     expect(details).toEqual(["", "+0.5", "+20", "3 changes"]);
     expect(rows()[0].title).toBe("The photo as opened");
     expect(rows()[3].title).toBe("Exposure: 0.5 → 1\nContrast: 20 → 10\nTint: — → 4");
+  });
+
+  it("hides what each step changed when the Preferences toggle is off, keeping it on hover", () => {
+    mount({ history: HISTORY, settings: { [SHOW_CHANGES_KEY]: false } });
+    expect(document.querySelectorAll(`.${DETAIL_CLASS}`)).toHaveLength(0);
+    expect(rows()[3].title).toBe("Exposure: 0.5 → 1\nContrast: 20 → 10\nTint: — → 4");
+  });
+
+  it("follows the toggle as it is flipped, without reopening the panel", () => {
+    const rig = mount({ history: HISTORY });
+    act(() => rig.api.settings.set(SHOW_CHANGES_KEY, false));
+    expect(document.querySelectorAll(`.${DETAIL_CLASS}`)).toHaveLength(0);
+    act(() => rig.api.settings.set(SHOW_CHANGES_KEY, true));
+    expect(rows()[3].querySelector(`.${DETAIL_CLASS}`)?.textContent).toBe("3 changes");
   });
 
   it("names extension values by their tool and label", () => {

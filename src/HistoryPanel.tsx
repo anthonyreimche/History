@@ -10,6 +10,7 @@ import { stepChanges } from "./diff";
 import { describeStep, stepDetail } from "./format";
 import { React, api } from "./rt";
 import type { UiTokens } from "./safelight";
+import { useShowChanges } from "./settings";
 
 export const LIST_CLASS = "history-panel-list";
 export const ROW_CLASS = "history-panel-step";
@@ -41,6 +42,7 @@ export function HistoryPanel() {
   const historyIndex = useDevelopStore((s) => s.historyIndex);
   const editError = useDevelopStore((s) => s.editError);
   const goToHistory = useDevelopStore((s) => s.goToHistory);
+  const showChanges = useShowChanges();
   const shownStep = React.useRef<HTMLButtonElement>(null);
 
   React.useEffect(() => {
@@ -66,7 +68,7 @@ export function HistoryPanel() {
               onClick={() => goToHistory(i)}
             >
               <span className={LABEL_CLASS}>{step.label}</span>
-              <span className={DETAIL_CLASS}>{stepDetail(changes, describe)}</span>
+              {showChanges && <span className={DETAIL_CLASS}>{stepDetail(changes, describe)}</span>}
             </button>
           </li>
         );

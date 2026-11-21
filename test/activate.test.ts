@@ -1,9 +1,10 @@
-// What activate() registers: the History panel in Develop's left rail, and the
-// stylesheet that gives it the app's look.
+// What activate() registers: the History panel in Develop's left rail, its
+// Preferences toggle, and the stylesheet that gives it the app's look.
 
 import { describe, expect, it } from "vitest";
 import { HistoryPanel, ROW_CLASS } from "../src/HistoryPanel";
 import { PANEL_ID, STYLESHEET_ID, activate } from "../src/index";
+import { SHOW_CHANGES_KEY } from "../src/settings";
 import { fakeApi } from "./support/fake-api";
 
 describe("activate", () => {
@@ -19,6 +20,16 @@ describe("activate", () => {
       },
     ]);
     expect(PANEL_ID).toBe("history.panel");
+  });
+
+  it("registers a Preferences toggle for what each step changed, on unless turned off", () => {
+    const rig = fakeApi();
+    activate(rig.api);
+    expect(rig.settingsSections).toHaveLength(1);
+    expect(rig.settingsSections[0].fields).toEqual([
+      expect.objectContaining({ key: SHOW_CHANGES_KEY, type: "boolean", default: true }),
+    ]);
+    expect(rig.settingsSections[0].fields[0].hint).toContain("602 changes");
   });
 
   it("registers one stylesheet for the panel's classes, coloured from the theme tokens", () => {

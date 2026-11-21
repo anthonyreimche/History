@@ -79,6 +79,22 @@ export interface StylesheetContribution {
   css: string;
 }
 
+/** An on/off field in the extension's Preferences ▸ Extensions section. */
+export interface BooleanSettingsField {
+  key: string;
+  label: string;
+  hint?: string;
+  type: "boolean";
+  default: boolean;
+}
+
+/** The extension's section in Preferences ▸ Extensions. */
+export interface SettingsContribution {
+  title?: string;
+  fields: BooleanSettingsField[];
+  order?: number;
+}
+
 /** The theme's CSS variables as `var(--color-…)` strings. */
 export interface UiTokens {
   readonly surface3: string;
@@ -94,6 +110,14 @@ export interface SafelightAPI {
   react: typeof import("react");
   registerPanel(c: PanelContribution): void;
   registerStylesheet(c: StylesheetContribution): void;
+  registerSettings(c: SettingsContribution): void;
+  /** Persisted per-extension values, as set in Preferences ▸ Extensions. */
+  settings: {
+    get<T>(key: string, fallback: T): T;
+    set(key: string, value: unknown): void;
+    /** Fires when any of this extension's settings change (any window). */
+    onChange(cb: (key: string, value: unknown) => void): () => void;
+  };
   ui: { tokens: UiTokens };
   params: {
     get(qualifiedKey: string): ParamDescriptor | undefined;

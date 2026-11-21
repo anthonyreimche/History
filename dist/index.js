@@ -114,54 +114,69 @@ function _(e) {
 	g = e, h = e.react;
 }
 //#endregion
+//#region src/settings.ts
+var v = "showChanges", y = {
+	title: "History",
+	fields: [{
+		key: v,
+		label: "Show what each step changed",
+		hint: "Beside each step: how far a slider moved, or how many settings changed, such as “602 changes”. Hovering a step lists them either way.",
+		type: "boolean",
+		default: !0
+	}]
+};
+function b() {
+	return h.useSyncExternalStore((e) => g.settings.onChange((t) => t === "showChanges" && e()), () => g.settings.get(v, !0));
+}
+//#endregion
 //#region src/HistoryPanel.tsx
-var v = "history-panel-list", y = "history-panel-step", b = "history-panel-label", x = "history-panel-detail", S = "history-panel-empty";
-function C(e) {
+var x = "history-panel-list", S = "history-panel-step", C = "history-panel-label", w = "history-panel-detail", T = "history-panel-empty";
+function E(e) {
 	return `
-:where(.${v}) { list-style: none; margin: 0; padding: 0.25rem; display: flex; flex-direction: column; gap: 1px; max-height: 20rem; overflow-y: auto; }
-:where(.${y}) { display: flex; width: 100%; align-items: baseline; gap: 0.5rem; border-radius: 0.25rem; padding: 0.25rem 0.5rem; background-color: transparent; font-size: 11px; text-align: left; color: ${e.textSecondary}; cursor: pointer; }
-@media (hover: hover) { :where(.${y}:hover) { background-color: ${e.surface3}; color: ${e.textPrimary}; } }
-:where(.${y}[aria-current="step"]) { background-color: ${e.surface3}; color: ${e.textPrimary}; box-shadow: inset 2px 0 0 ${e.accent}; }
-:where(.${y}[data-state="redo"]) { opacity: 0.45; }
-:where(.${b}) { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-:where(.${x}) { flex: none; color: ${e.textMuted}; font-variant-numeric: tabular-nums; }
-:where(.${S}) { padding: 0.5rem; font-size: 11px; color: ${e.textMuted}; }
-html.sl-larger-text .${y}, html.sl-larger-text .${S} { font-size: 13px !important; line-height: 1.45 !important; }
+:where(.${x}) { list-style: none; margin: 0; padding: 0.25rem; display: flex; flex-direction: column; gap: 1px; max-height: 20rem; overflow-y: auto; }
+:where(.${S}) { display: flex; width: 100%; align-items: baseline; gap: 0.5rem; border-radius: 0.25rem; padding: 0.25rem 0.5rem; background-color: transparent; font-size: 11px; text-align: left; color: ${e.textSecondary}; cursor: pointer; }
+@media (hover: hover) { :where(.${S}:hover) { background-color: ${e.surface3}; color: ${e.textPrimary}; } }
+:where(.${S}[aria-current="step"]) { background-color: ${e.surface3}; color: ${e.textPrimary}; box-shadow: inset 2px 0 0 ${e.accent}; }
+:where(.${S}[data-state="redo"]) { opacity: 0.45; }
+:where(.${C}) { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+:where(.${w}) { flex: none; color: ${e.textMuted}; font-variant-numeric: tabular-nums; }
+:where(.${T}) { padding: 0.5rem; font-size: 11px; color: ${e.textMuted}; }
+html.sl-larger-text .${S}, html.sl-larger-text .${T} { font-size: 13px !important; line-height: 1.45 !important; }
 `;
 }
-function w() {
-	let e = g.stores.useDevelopStore, t = e((e) => e.history), r = e((e) => e.historyIndex), i = e((e) => e.editError), a = e((e) => e.goToHistory), o = h.useRef(null);
+function D() {
+	let e = g.stores.useDevelopStore, t = e((e) => e.history), r = e((e) => e.historyIndex), i = e((e) => e.editError), a = e((e) => e.goToHistory), o = b(), s = h.useRef(null);
 	if (h.useEffect(() => {
-		o.current?.scrollIntoView({ block: "nearest" });
-	}, [t, r]), i) return /* @__PURE__ */ h.createElement("div", { className: S }, "This photo's history couldn't be read.");
-	if (t.length === 0) return /* @__PURE__ */ h.createElement("div", { className: S }, "No photo open");
-	let s = (e) => g.params.get(e);
+		s.current?.scrollIntoView({ block: "nearest" });
+	}, [t, r]), i) return /* @__PURE__ */ h.createElement("div", { className: T }, "This photo's history couldn't be read.");
+	if (t.length === 0) return /* @__PURE__ */ h.createElement("div", { className: T }, "No photo open");
+	let c = (e) => g.params.get(e);
 	return /* @__PURE__ */ h.createElement("ol", {
-		className: v,
+		className: x,
 		"aria-label": "Edit history"
 	}, t.map((e, i) => {
-		let c = n(t, i);
+		let l = n(t, i);
 		return /* @__PURE__ */ h.createElement("li", { key: i }, /* @__PURE__ */ h.createElement("button", {
-			ref: i === r ? o : void 0,
-			className: y,
+			ref: i === r ? s : void 0,
+			className: S,
 			"aria-current": i === r ? "step" : void 0,
 			"data-state": i > r ? "redo" : void 0,
-			title: m(i, c, s),
+			title: m(i, l, c),
 			onClick: () => a(i)
-		}, /* @__PURE__ */ h.createElement("span", { className: b }, e.label), /* @__PURE__ */ h.createElement("span", { className: x }, p(c, s))));
+		}, /* @__PURE__ */ h.createElement("span", { className: C }, e.label), o && /* @__PURE__ */ h.createElement("span", { className: "history-panel-detail" }, p(l, c))));
 	}));
 }
 //#endregion
 //#region src/index.tsx
-var T = "history", E = `${T}.panel`, D = `${T}.styles`;
-function O(e) {
+var O = "history", k = `${O}.panel`, A = `${O}.styles`;
+function j(e) {
 	_(e), e.registerStylesheet({
-		id: D,
-		css: C(e.ui.tokens)
-	}), e.registerPanel({
-		id: E,
+		id: A,
+		css: E(e.ui.tokens)
+	}), e.registerSettings(y), e.registerPanel({
+		id: k,
 		title: "History",
-		component: w,
+		component: D,
 		defaultDock: {
 			module: "develop",
 			direction: "left",
@@ -172,6 +187,6 @@ function O(e) {
 	});
 }
 //#endregion
-export { T as EXTENSION_ID, E as PANEL_ID, D as STYLESHEET_ID, O as activate };
+export { O as EXTENSION_ID, k as PANEL_ID, A as STYLESHEET_ID, j as activate };
 
 //# sourceMappingURL=index.js.map
