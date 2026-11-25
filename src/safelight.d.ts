@@ -8,7 +8,7 @@
 // so the host's source is not on the type path; React types come from
 // @types/react (dev only).
 
-import type { ComponentType } from "react";
+import type { ComponentType, JSX } from "react";
 
 export interface StoreApi<T> {
   (): T;
@@ -33,6 +33,11 @@ export interface EditSnapshot {
   params: Readonly<Record<string, unknown>> & { masks?: readonly MaskLike[] };
   /** Extension stage params by qualified key ("{stageId}.{key}"). */
   paramBag?: Readonly<Record<string, unknown>>;
+  /** The extension that made the step, by id (Safelight 3.2.8). */
+  source?: string;
+  /** Set on a local undo, redo or jump: the history index of the step it
+   *  went to, null for before the extension's first step (Safelight 3.2.8). */
+  local?: { to: number | null };
 }
 
 export interface DevelopStoreState {
@@ -44,6 +49,32 @@ export interface DevelopStoreState {
   editError: string | null;
   /** Show history[index] as one move, like a single undo (Safelight 3.2.5). */
   goToHistory(index: number): void;
+  /** Move `source`'s own settings to its local step `position` (-1: before
+   *  its first), as one step that keeps every other tool's edits (3.2.8). */
+  goToLocalHistory(source: string, position: number): Promise<void>;
+}
+
+/** One step an extension made. */
+export interface LocalStep {
+  /** The step's place in `history`. */
+  index: number;
+  label: string;
+  timestamp: number;
+}
+
+/** An extension's local history on the open photo (Safelight 3.2.8). */
+export interface LocalHistoryView {
+  source: string;
+  name: string;
+  /** Its steps, oldest first; those past `cursor` are its redo. */
+  steps: LocalStep[];
+  /** The step its settings show now, -1 before its first. */
+  cursor: number;
+}
+
+export interface HistorySource {
+  id: string;
+  name: string;
 }
 
 /** What core knows about one extension stage param. */
@@ -95,6 +126,17 @@ export interface SettingsContribution {
   order?: number;
 }
 
+export interface SegmentedOption {
+  value: string;
+  label: string;
+  title?: string;
+}
+
+export interface SelectOption {
+  value: string;
+  label: string;
+}
+
 /** The theme's CSS variables as `var(--color-…)` strings. */
 export interface UiTokens {
   readonly surface3: string;
@@ -118,12 +160,37 @@ export interface SafelightAPI {
     /** Fires when any of this extension's settings change (any window). */
     onChange(cb: (key: string, value: unknown) => void): () => void;
   };
-  ui: { tokens: UiTokens };
+  ui: {
+    tokens: UiTokens;
+    SegmentedControl(props: {
+      value: string;
+      onChange: (value: string) => void;
+      options: SegmentedOption[];
+      size?: "sm" | "md";
+    }): JSX.Element;
+    Select(props: {
+      value: string;
+      onChange: (value: string) => void;
+      options?: SelectOption[];
+      ariaLabel?: string;
+      title?: string;
+      className?: string;
+    }): JSX.Element;
+  };
   params: {
     get(qualifiedKey: string): ParamDescriptor | undefined;
   };
   stores: {
     useDevelopStore: StoreApi<DevelopStoreState>;
+  };
+  /** Local history (Safelight 3.2.8). */
+  develop: {
+    useLocalHistory(source: string | null): LocalHistoryView | null;
+    /** Extensions with steps on the open photo, the latest edited first. */
+    useHistorySources(): HistorySource[];
+    /** The latest edited extension, or the one picked until another edits. */
+    useChosenHistorySource(): string | null;
+    chooseHistorySource(source: string | null): void;
   };
 }
 

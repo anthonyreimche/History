@@ -1,7 +1,16 @@
 # History for Safelight
 
-A Develop **History** panel: every step of the photo you are editing, oldest
-first, from the photo as opened to your latest change.
+A Develop **History** panel in two tabs:
+
+- **Global:** every step of the photo you are editing, oldest first, from the
+  photo as opened to your latest change.
+- **Local:** only the steps one extension made, such as Basic or HSL. The
+  dropdown follows the extension you edited last; pick another to see its
+  steps instead, until you edit with a different one. Clicking a local step
+  moves only that extension's settings back or forward, as a new step, and
+  keeps every other tool's later edits.
+
+On the Global tab:
 
 - **Go to any step:** click it. The photo shows the edit as it was after that
   step, the same as pressing Undo or Redo that many times, but in one move.
@@ -14,12 +23,17 @@ first, from the photo as opened to your latest change.
   alone, turn off **Show what each step changed** in Preferences ▸
   Extensions ▸ History; hovering a step still lists its changes.
 
-The list is the photo's own undo history, so it agrees with Undo and Redo, the
-keyboard shortcuts and other windows, and keeps as many steps as Safelight
-keeps. The extension stores nothing of its own: it works out what changed
-between neighbouring steps and keeps only those differences while you edit.
+The tab you pick is remembered. Masks move as a whole on the Local tab: going
+back on Basic after it changed a mask's exposure puts that mask back as it was.
 
-Needs Safelight 3.2.5 or later.
+Both lists are the photo's own undo history, so they agree with Undo and Redo,
+the keyboard shortcuts and other windows, and keep as many steps as Safelight
+keeps. Safelight records which extension made each step from 3.2.8 on, so
+steps made before then show only on the Global tab. The extension stores
+nothing of its own but the tab: it works out what changed between
+neighbouring steps and keeps only those differences while you edit.
+
+Needs Safelight 3.2.8 or later.
 
 ## Development
 

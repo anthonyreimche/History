@@ -27,8 +27,13 @@ export const HISTORY_SETTINGS: SettingsContribution = {
 /** Whether the list shows each step's changes beside it, following the
  *  Preferences toggle as it is flipped in any window. */
 export function useShowChanges(): boolean {
+  return useSetting(SHOW_CHANGES_KEY, true);
+}
+
+/** One of the extension's stored values, followed as it changes in any window. */
+export function useSetting<T>(key: string, fallback: T): T {
   return React.useSyncExternalStore(
-    (notify) => api.settings.onChange((key) => key === SHOW_CHANGES_KEY && notify()),
-    () => api.settings.get(SHOW_CHANGES_KEY, true),
+    (notify) => api.settings.onChange((changed) => changed === key && notify()),
+    () => api.settings.get(key, fallback),
   );
 }

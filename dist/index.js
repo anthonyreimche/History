@@ -126,57 +126,132 @@ var v = "showChanges", y = {
 	}]
 };
 function b() {
-	return h.useSyncExternalStore((e) => g.settings.onChange((t) => t === "showChanges" && e()), () => g.settings.get(v, !0));
+	return x(v, !0);
+}
+function x(e, t) {
+	return h.useSyncExternalStore((t) => g.settings.onChange((n) => n === e && t()), () => g.settings.get(e, t));
 }
 //#endregion
 //#region src/HistoryPanel.tsx
-var x = "history-panel-list", S = "history-panel-step", C = "history-panel-label", w = "history-panel-detail", T = "history-panel-empty";
-function E(e) {
+var S = "history-panel-tabs", C = "history-panel-list", w = "history-panel-step", T = "history-panel-label", E = "history-panel-detail", D = "history-panel-empty", O = [{
+	value: "global",
+	label: "Global",
+	title: "The photo's whole history: going to a step undoes or redoes every tool"
+}, {
+	value: "local",
+	label: "Local",
+	title: "The steps one extension made: going to a step moves only that extension's settings"
+}];
+function k(e) {
 	return `
-:where(.${x}) { list-style: none; margin: 0; padding: 0.25rem; display: flex; flex-direction: column; gap: 1px; max-height: 20rem; overflow-y: auto; }
-:where(.${S}) { display: flex; width: 100%; align-items: baseline; gap: 0.5rem; border-radius: 0.25rem; padding: 0.25rem 0.5rem; background-color: transparent; font-size: 11px; text-align: left; color: ${e.textSecondary}; cursor: pointer; }
-@media (hover: hover) { :where(.${S}:hover) { background-color: ${e.surface3}; color: ${e.textPrimary}; } }
-:where(.${S}[aria-current="step"]) { background-color: ${e.surface3}; color: ${e.textPrimary}; box-shadow: inset 2px 0 0 ${e.accent}; }
-:where(.${S}[data-state="redo"]) { opacity: 0.45; }
-:where(.${C}) { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-:where(.${w}) { flex: none; color: ${e.textMuted}; font-variant-numeric: tabular-nums; }
-:where(.${T}) { padding: 0.5rem; font-size: 11px; color: ${e.textMuted}; }
-html.sl-larger-text .${S}, html.sl-larger-text .${T} { font-size: 13px !important; line-height: 1.45 !important; }
+:where(.${S}) { display: flex; flex-direction: column; gap: 0.25rem; padding: 0.25rem 0.25rem 0; }
+:where(.${C}) { list-style: none; margin: 0; padding: 0.25rem; display: flex; flex-direction: column; gap: 1px; max-height: 20rem; overflow-y: auto; }
+:where(.${w}) { display: flex; width: 100%; align-items: baseline; gap: 0.5rem; border-radius: 0.25rem; padding: 0.25rem 0.5rem; background-color: transparent; font-size: 11px; text-align: left; color: ${e.textSecondary}; cursor: pointer; }
+@media (hover: hover) { :where(.${w}:hover) { background-color: ${e.surface3}; color: ${e.textPrimary}; } }
+:where(.${w}[aria-current="step"]) { background-color: ${e.surface3}; color: ${e.textPrimary}; box-shadow: inset 2px 0 0 ${e.accent}; }
+:where(.${w}[data-state="redo"]) { opacity: 0.45; }
+:where(.${T}) { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+:where(.${E}) { flex: none; color: ${e.textMuted}; font-variant-numeric: tabular-nums; }
+:where(.${D}) { padding: 0.5rem; font-size: 11px; color: ${e.textMuted}; }
+html.sl-larger-text .${w}, html.sl-larger-text .${D} { font-size: 13px !important; line-height: 1.45 !important; }
 `;
 }
-function D() {
-	let e = g.stores.useDevelopStore, t = e((e) => e.history), r = e((e) => e.historyIndex), i = e((e) => e.editError), a = e((e) => e.goToHistory), o = b(), s = h.useRef(null);
-	if (h.useEffect(() => {
-		s.current?.scrollIntoView({ block: "nearest" });
-	}, [t, r]), i) return /* @__PURE__ */ h.createElement("div", { className: T }, "This photo's history couldn't be read.");
-	if (t.length === 0) return /* @__PURE__ */ h.createElement("div", { className: T }, "No photo open");
-	let c = (e) => g.params.get(e);
+function A() {
+	let e = g.stores.useDevelopStore, t = e((e) => e.history), n = e((e) => e.editError), r = x("tab", "global"), { SegmentedControl: i } = g.ui;
+	return n ? /* @__PURE__ */ h.createElement("div", { className: D }, "This photo's history couldn't be read.") : t.length === 0 ? /* @__PURE__ */ h.createElement("div", { className: D }, "No photo open") : /* @__PURE__ */ h.createElement("div", null, /* @__PURE__ */ h.createElement("div", { className: S }, /* @__PURE__ */ h.createElement(i, {
+		size: "sm",
+		value: r,
+		onChange: (e) => g.settings.set("tab", e),
+		options: O
+	}), r === "local" && /* @__PURE__ */ h.createElement(M, null)), r === "local" ? /* @__PURE__ */ h.createElement(N, { history: t }) : /* @__PURE__ */ h.createElement(j, { history: t }));
+}
+function j({ history: e }) {
+	let t = g.stores.useDevelopStore((e) => e.historyIndex), n = g.stores.useDevelopStore((e) => e.goToHistory), r = F(e, t);
 	return /* @__PURE__ */ h.createElement("ol", {
-		className: x,
+		className: C,
 		"aria-label": "Edit history"
-	}, t.map((e, i) => {
-		let l = n(t, i);
-		return /* @__PURE__ */ h.createElement("li", { key: i }, /* @__PURE__ */ h.createElement("button", {
-			ref: i === r ? s : void 0,
-			className: S,
-			"aria-current": i === r ? "step" : void 0,
-			"data-state": i > r ? "redo" : void 0,
-			title: m(i, l, c),
-			onClick: () => a(i)
-		}, /* @__PURE__ */ h.createElement("span", { className: C }, e.label), o && /* @__PURE__ */ h.createElement("span", { className: "history-panel-detail" }, p(l, c))));
-	}));
+	}, e.map((i, a) => /* @__PURE__ */ h.createElement(I, {
+		key: a,
+		ref: a === t ? r : void 0,
+		history: e,
+		index: a,
+		label: i.label,
+		state: a === t ? "current" : a > t ? "redo" : void 0,
+		onClick: () => n(a)
+	})));
+}
+function M() {
+	let { Select: e } = g.ui, t = g.develop.useHistorySources(), n = g.develop.useLocalHistory(g.develop.useChosenHistorySource());
+	if (!n) return null;
+	let r = t.some((e) => e.id === n.source) ? t : [{
+		id: n.source,
+		name: n.name
+	}, ...t];
+	return /* @__PURE__ */ h.createElement(e, {
+		ariaLabel: "Extension",
+		title: "Whose steps to show: the extension edited last, until you pick another",
+		value: n.source,
+		onChange: (e) => g.develop.chooseHistorySource(e),
+		options: r.map((e) => ({
+			value: e.id,
+			label: e.name
+		}))
+	});
+}
+function N({ history: e }) {
+	let t = g.develop.useLocalHistory(g.develop.useChosenHistorySource()), n = g.stores.useDevelopStore((e) => e.goToLocalHistory), r = F(t, t?.cursor);
+	if (!t) return /* @__PURE__ */ h.createElement("div", { className: D }, "No extension has changed this photo yet");
+	let i = (e) => void n(t.source, e);
+	return /* @__PURE__ */ h.createElement("ol", {
+		className: C,
+		"aria-label": `${t.name} history`
+	}, /* @__PURE__ */ h.createElement(I, {
+		ref: t.cursor === -1 ? r : void 0,
+		history: e,
+		index: 0,
+		label: e[0].label,
+		title: `${t.name} before its first step`,
+		state: t.cursor === -1 ? "current" : void 0,
+		onClick: () => i(-1)
+	}), t.steps.map((n, a) => /* @__PURE__ */ h.createElement(I, {
+		key: n.index,
+		ref: a === t.cursor ? r : void 0,
+		history: e,
+		index: n.index,
+		label: n.label,
+		state: P(t, a),
+		onClick: () => i(a)
+	})));
+}
+var P = (e, t) => t === e.cursor ? "current" : t > e.cursor ? "redo" : void 0;
+function F(e, t) {
+	let n = h.useRef(null);
+	return h.useEffect(() => {
+		n.current?.scrollIntoView({ block: "nearest" });
+	}, [e, t]), n;
+}
+function I({ ref: e, history: t, index: r, label: i, title: a, state: o, onClick: s }) {
+	let c = b(), l = (e) => g.params.get(e), u = n(t, r);
+	return /* @__PURE__ */ h.createElement("li", null, /* @__PURE__ */ h.createElement("button", {
+		ref: e,
+		className: w,
+		"aria-current": o === "current" ? "step" : void 0,
+		"data-state": o === "redo" ? "redo" : void 0,
+		title: a ?? m(r, u, l),
+		onClick: s
+	}, /* @__PURE__ */ h.createElement("span", { className: T }, i), c && /* @__PURE__ */ h.createElement("span", { className: "history-panel-detail" }, p(u, l))));
 }
 //#endregion
 //#region src/index.tsx
-var O = "history", k = `${O}.panel`, A = `${O}.styles`;
-function j(e) {
+var L = "history", R = `${L}.panel`, z = `${L}.styles`;
+function B(e) {
 	_(e), e.registerStylesheet({
-		id: A,
-		css: E(e.ui.tokens)
+		id: z,
+		css: k(e.ui.tokens)
 	}), e.registerSettings(y), e.registerPanel({
-		id: k,
+		id: R,
 		title: "History",
-		component: D,
+		component: A,
 		defaultDock: {
 			module: "develop",
 			direction: "left",
@@ -187,6 +262,6 @@ function j(e) {
 	});
 }
 //#endregion
-export { O as EXTENSION_ID, k as PANEL_ID, A as STYLESHEET_ID, j as activate };
+export { L as EXTENSION_ID, R as PANEL_ID, z as STYLESHEET_ID, B as activate };
 
 //# sourceMappingURL=index.js.map
