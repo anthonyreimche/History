@@ -258,7 +258,8 @@ function B(e) {
 			order: 3,
 			width: 240,
 			height: 220
-		}
+		},
+		modules: ["develop"]
 	});
 }
 //#endregion

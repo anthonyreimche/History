@@ -17,6 +17,7 @@ describe("activate", () => {
         title: "History",
         component: HistoryPanel,
         defaultDock: { module: "develop", direction: "left", order: 3, width: 240, height: 220 },
+        modules: ["develop"],
       },
     ]);
     expect(PANEL_ID).toBe("history.panel");

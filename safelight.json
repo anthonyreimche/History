@@ -1,7 +1,7 @@
 {
   "id": "history",
   "name": "History",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Every step of the photo you are editing, to go back or forward to, and what each one changed.",
   "author": "Anthony Reimche",
   "main": "dist/index.js",

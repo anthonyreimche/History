@@ -102,6 +102,8 @@ export interface PanelContribution {
   title: string;
   component: ComponentType;
   defaultDock?: PanelDockDefault;
+  /** The modules the panel may be docked in; omitted, every module (Safelight 3.2.8). */
+  modules?: readonly string[];
 }
 
 /** A stylesheet applied to every app window after the core styles. */

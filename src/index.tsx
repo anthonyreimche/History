@@ -24,5 +24,6 @@ export function activate(host: SafelightAPI): void {
     title: "History",
     component: HistoryPanel,
     defaultDock: { module: "develop", direction: "left", order: 3, width: 240, height: 220 },
+    modules: ["develop"],
   });
 }
